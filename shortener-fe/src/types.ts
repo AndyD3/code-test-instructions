@@ -3,3 +3,8 @@ export type ShortenedUrl = {
   fullUrl: string,
   shortUrl: string
 }
+
+export type ShortenUrlRequest = {
+  fullUrl: string,
+  customAlias?: string
+}

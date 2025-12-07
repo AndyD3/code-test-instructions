@@ -1,6 +1,6 @@
 package com.douglas.andy.shortener_be.model
 
-data class ShortenedUrl(
+data class ShortenUrlRequest (
     val fullUrl: String,
-    val shortUrl: String
+    val customAlias: String?,
 )

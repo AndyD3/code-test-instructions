@@ -1,5 +1,12 @@
 # URL Shortener Coding Task
 
+# Instructions 
+Create the database by running from this folder by utilising the docker compose file in this folder
+```
+docker compose up
+```
+Next, run the front end and back end from their folders (instructions are there in the README files)
+
 ## Task
 
 Build a simple **URL shortener** in a ** preferably JVM-based language** (e.g. Java, Kotlin).
