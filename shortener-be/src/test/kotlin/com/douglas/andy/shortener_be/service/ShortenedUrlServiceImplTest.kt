@@ -5,6 +5,7 @@ import com.douglas.andy.shortener_be.repository.ShortenedUrlRepository
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import kotlin.test.assertEquals
@@ -18,28 +19,33 @@ class ShortenedUrlServiceImplTest {
     @MockitoBean
     lateinit var repository : ShortenedUrlRepository
 
+    @Value("\${shortener.origin}")
+    lateinit var origin : String
+
     @Test
-    fun shouldPassBackAllDataFromRepository() {
+    fun shouldPassBackShortenedUrlAndHydratingWithTheOriginDataFromRepository() {
 
-        val shortenedUrl = ShortenedUrl("fullUrl1", "shortUrl1")
-        val shortenedUrl2 = ShortenedUrl("fullUrl2", "shortUrl2")
-        val expectedList = listOf(shortenedUrl, shortenedUrl2)
+        val dataReturnedFromRespository = listOf(ShortenedUrl("fullUrl1", "shortUrl1"), ShortenedUrl("fullUrl2", "shortUrl2"))
+        val expectedDataHydrated = listOf(ShortenedUrl("fullUrl1",origin+"shortUrl1"), ShortenedUrl("fullUrl2", origin+"shortUrl2"))
 
-        Mockito.`when`(repository.findAll()).thenReturn(expectedList)
+        Mockito.`when`(repository.findAll()).thenReturn(dataReturnedFromRespository)
 
-        val actualList= shortenedUrlServiceImpl.findAll()
+        val actualData= shortenedUrlServiceImpl.findAll()
 
-        assertEquals(actualList,actualList)
+        assertEquals(expectedDataHydrated, actualData)
         Mockito.verify(repository, Mockito.times(1)).findAll()
     }
 
     @Test
-    fun shouldSavePassedObject() {
+    fun shouldSavePassedObjectAndReturnItWithHydratedOrigin() {
 
         val shortenedUrl = ShortenedUrl("fullUrl1", "shortUrl1")
+        val expectedReturned = ShortenedUrl("fullUrl1", origin+"shortUrl1")
 
         Mockito.`when`(repository.save(shortenedUrl)).thenReturn(shortenedUrl)
-        shortenedUrlServiceImpl.create(shortenedUrl);
+        val actualReturned = shortenedUrlServiceImpl.create(shortenedUrl);
+
+        assertEquals(expectedReturned,actualReturned);
 
         Mockito.verify(repository, Mockito.times(1)).save(shortenedUrl);
     }

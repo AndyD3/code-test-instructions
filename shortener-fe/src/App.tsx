@@ -100,7 +100,7 @@ function URLManager() {
             ) : (
               shortenedUrls?.map((url) => ( 
                 <tr key={url.shortUrl}>
-                  <td>{url.shortUrl}</td>
+                  <td><a href={url.shortUrl}>{url.shortUrl}</a></td>
                   <td>{url.fullUrl}</td>
                 </tr>
                 )
