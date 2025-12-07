@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 class ShortenedUrlServiceImpl(private val repository: ShortenedUrlRepository) : ShortenedUrlService {
 
     override fun create(shortenedURL: ShortenedUrl): ShortenedUrl {
+        System.out.println("in service"+shortenedURL);
         return repository.save(shortenedURL);
     }
 

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/")
 class ShortenerController(private val service: ShortenedUrlService) {
 
-
     @GetMapping("/urls")
     fun list(): ResponseEntity<List<ShortenedUrl>> {
         return ResponseEntity.ok(service.findAll())

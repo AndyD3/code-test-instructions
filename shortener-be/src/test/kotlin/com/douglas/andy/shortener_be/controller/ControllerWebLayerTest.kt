@@ -1,28 +1,23 @@
 package com.douglas.andy.shortener_be.controller;
 
 import com.douglas.andy.shortener_be.model.ShortenUrlRequest
-import com.douglas.andy.shortener_be.model.ShortenUrlResponse
 import com.douglas.andy.shortener_be.model.ShortenedUrl
 import com.douglas.andy.shortener_be.service.ShortenedUrlService
-import com.douglas.andy.shortener_be.util.ObjectMapperUtil
-import org.hamcrest.Matchers.containsString
-import org.junit.jupiter.api.Test
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.`is`
-import org.mockito.Mock
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
-import org.hamcrest.Matchers.hasSize
+import org.springframework.http.MediaType
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -33,7 +28,7 @@ class TestingWebApplicationTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    private val objectMapperUtil = ObjectMapperUtil()
+    private val objectMapper = ObjectMapper();
 
     @MockitoBean
     private lateinit var service: ShortenedUrlService
@@ -70,7 +65,7 @@ class TestingWebApplicationTest {
 
         mockMvc.perform(
                         post("/shorten")
-                                .content(objectMapperUtil.getJson(shortenUrlRequest))
+                                .content(objectMapper.writeValueAsString(shortenUrlRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
