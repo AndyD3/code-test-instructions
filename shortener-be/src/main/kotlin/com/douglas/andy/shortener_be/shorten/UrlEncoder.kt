@@ -16,7 +16,7 @@ class UrlEncoder{
         val stringBuilder = StringBuilder()
 
         while (number > 0) {
-            stringBuilder.append(CHARACTERS[counter % BASE])
+            stringBuilder.append(CHARACTERS[number % BASE])
             number /= BASE
         }
 

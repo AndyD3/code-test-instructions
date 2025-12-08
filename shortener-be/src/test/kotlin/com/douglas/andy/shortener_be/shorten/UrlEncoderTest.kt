@@ -1,5 +1,6 @@
 package com.douglas.andy.shortener_be.shorten;
 
+import com.mongodb.assertions.Assertions.assertTrue
 import org.junit.jupiter.api.Test;
 
 import kotlin.random.Random
@@ -24,12 +25,12 @@ class UrlEncoderTest {
     @Test
     fun shouldGenerateDifferentOutputEachCall() {
 
-        val result1=encoder.encode(1)
-        val result2=encoder.encode(2)
-        val result3=encoder.encode(3)
+        val set=HashSet<String>();
+        val numbersToTry=300;
 
-        assertThat(result1).isNotEqualTo(result2)
-        assertThat(result1).isNotEqualTo(result3)
-        assertThat(result2).isNotEqualTo(result3)
+        for(i in 1..numbersToTry) {
+            assertTrue( set.add(encoder.encode(i)))
+        }
     }
+
 }
