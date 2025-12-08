@@ -19,7 +19,7 @@ export default function App() {
 function URLManager() {
   const { data: shortenedUrls, isLoading, isError} = useReadUrls()
 
-  const { mutate: createUrl, status: statusCreateUrl } = useCreateUrl()
+  const { mutate: createUrl, status: statusCreateUrl, error: isErrorCreateURL, isSuccess} = useCreateUrl()
 
   const emptyFormData = {
     fullUrl: '',
@@ -82,15 +82,22 @@ function URLManager() {
         </button>
       </div>
 
-      {isError && <div style={{color: "red"}}>An error has occurred...</div>}
+      
+      {isSuccess && <div style={{color: "green"}}>Created successfully</div>}
+
+      {isErrorCreateURL && <div style={{color: "red"}}>An error has occurred creating short url</div>}
+
+      {isError && <div style={{color: "red"}}>An error has occurred reading URLs...</div>}
 
       {isLoading && <div>Loading...</div>}    
 
       <h2>Stored URLs</h2>
       <table className="dataTable">
         <thead>
-          <td>Short URL</td>
-          <td>Full URL</td>
+          <tr>
+            <th>Short URL</th>
+            <th>Full URL</th>
+          </tr>
         </thead>
         <tbody>
           {shortenedUrls?.length == 0 ? (
@@ -100,7 +107,7 @@ function URLManager() {
             ) : (
               shortenedUrls?.map((url) => ( 
                 <tr key={url.shortUrl}>
-                  <td><a href={url.shortUrl}>{url.shortUrl}</a></td>
+                  <td><a href={url.shortUrl} target="_blank">{url.shortUrl}</a></td>
                   <td>{url.fullUrl}</td>
                 </tr>
                 )

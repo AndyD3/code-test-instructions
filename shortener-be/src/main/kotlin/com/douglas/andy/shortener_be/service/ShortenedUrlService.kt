@@ -6,4 +6,5 @@ interface ShortenedUrlService {
 
     fun create(request: ShortenedUrl): ShortenedUrl
     fun findAll(): List<ShortenedUrl>
+    fun findById(id: String) : ShortenedUrl
 }

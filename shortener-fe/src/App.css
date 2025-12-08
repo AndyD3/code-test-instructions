@@ -37,7 +37,7 @@ h1 {
   border-bottom: 1px solid #dddddd;
 }
 .dataTable tbody tr:nth-of-type(even) {
-  background-color: #555151;
+  background-color: #f3f3f3;
 }
 
 .dataTable tbody tr:last-of-type {
