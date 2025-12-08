@@ -4,6 +4,7 @@ import com.douglas.andy.shortener_be.exception.ShortURLExistsException
 import com.douglas.andy.shortener_be.model.ShortenUrlRequest
 import com.douglas.andy.shortener_be.model.ShortenedUrl
 import com.douglas.andy.shortener_be.service.ShortenedUrlService
+import com.douglas.andy.shortener_be.shorten.ShortenService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.`is`
@@ -35,6 +36,9 @@ class TestingWebApplicationTest {
     @MockitoBean
     private lateinit var service: ShortenedUrlService
 
+    @MockitoBean
+    private lateinit var shortenService: ShortenService
+
     val shortenedUrl1 = ShortenedUrl("fullUrl1" + Random.nextInt(), "shortUrl1" + Random.nextInt())
     val shortenedUrl2 = ShortenedUrl("fullUrl2" + Random.nextInt(), "shortUrl2" + Random.nextInt())
 
@@ -61,9 +65,32 @@ class TestingWebApplicationTest {
     @Test
     fun shouldCreateWithAliasAndReturnCreatedShortUrlWithDomain() {
 
-        val shortenUrlRequest = ShortenUrlRequest(shortenedUrl1.fullUrl, "customAlias")
+        val shortenUrlRequest = ShortenUrlRequest(fullUrl= shortenedUrl1.fullUrl, customAlias ="customAlias")
         val shortenedUrl = ShortenedUrl(shortenedUrl1.fullUrl, "customAlias")
 
+        Mockito.`when`(service.create(shortenedUrl)).thenReturn(shortenedUrl1)
+
+        mockMvc.perform(
+            post("/shorten")
+                .content(objectMapper.writeValueAsString(shortenUrlRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.shortUrl", `is`(shortenedUrl1.shortUrl)))
+
+        Mockito.verify(service, Mockito.times(1)).create(shortenedUrl)
+    }
+
+    @Test
+    fun shouldCreateWithoutAliasAndReturnCreatedShortUrlWithDomain() {
+
+        val shortenUrlRequest = ShortenUrlRequest( fullUrl=shortenedUrl1.fullUrl, customAlias = null)
+        val stubbedShort="stubbedShort"+Random.nextInt();
+
+        val shortenedUrl = ShortenedUrl(shortenedUrl1.fullUrl, stubbedShort)
+
+        Mockito.`when`(shortenService.getEncodedShort()).thenReturn(stubbedShort)
         Mockito.`when`(service.create(shortenedUrl)).thenReturn(shortenedUrl1)
 
         mockMvc.perform(
