@@ -1,17 +1,20 @@
 package com.douglas.andy.shortener_be.shorten
 
+import com.douglas.andy.shortener_be.service.CounterService
 import org.springframework.stereotype.Service
-import java.util.concurrent.atomic.AtomicInteger
 
 @Service
-class ShortenService {
+class ShortenService (var counterService: CounterService) {
 
-    @Volatile
-    private var count = AtomicInteger(1);
+    //TODO - how about an atomic update function rather than get and set??
 
-    val urlEncoder = UrlEncoder();
+    private var count : Int = counterService.get();
+
+    private val urlEncoder = UrlEncoder();
 
     fun getEncodedShort(): String {
-        return urlEncoder.encode(count.getAndIncrement())
+        count++;
+        counterService.set(count);
+        return urlEncoder.encode(count)
     }
 }
