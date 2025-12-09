@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @CrossOrigin(origins = ["http://localhost:5173"])
 @RequestMapping("/")
-class ShortenerController(private val service: ShortenedUrlService, private val encodedShortService: EncodedShortService) {
+class ShortenerController(
+    private val service: ShortenedUrlService,
+    private val encodedShortService: EncodedShortService
+) {
 
     @ExceptionHandler
     fun handleNoSuchElementException(ex: NoSuchElementException): ResponseEntity<String> =
@@ -47,6 +50,12 @@ class ShortenerController(private val service: ShortenedUrlService, private val 
                 ShortenedUrl(request.fullUrl, encodedShortService.getEncodedShort());
 
         val created = service.create(shortened)
-        return ResponseEntity( ShortenUrlResponse(created.shortUrl), HttpStatus.CREATED);
+        return ResponseEntity(ShortenUrlResponse(created.shortUrl), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{shortURL}")
+    fun delete(response: HttpServletResponse, @PathVariable shortURL: String): ResponseEntity<String> {
+        service.deleteById(shortURL);
+        return ResponseEntity.noContent().build();
     }
 }

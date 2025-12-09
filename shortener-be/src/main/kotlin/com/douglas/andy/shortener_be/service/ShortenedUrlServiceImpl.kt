@@ -27,4 +27,12 @@ class ShortenedUrlServiceImpl(private val repository: ShortenedUrlRepository, @V
         val foundItem=repository.findById(id);
         return foundItem.orElseThrow();
     }
+
+    override fun deleteById(id: String) {
+        if(!repository.existsById(id)) {
+            throw NoSuchElementException()
+        };
+
+        repository.deleteById(id);
+    }
 }

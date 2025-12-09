@@ -16,6 +16,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -65,7 +66,7 @@ class TestingWebApplicationTest {
     @Test
     fun shouldCreateWithAliasAndReturnCreatedShortUrlWithDomain() {
 
-        val shortenUrlRequest = ShortenUrlRequest(fullUrl= shortenedUrl1.fullUrl, customAlias ="customAlias")
+        val shortenUrlRequest = ShortenUrlRequest(fullUrl = shortenedUrl1.fullUrl, customAlias = "customAlias")
         val shortenedUrl = ShortenedUrl(shortenedUrl1.fullUrl, "customAlias")
 
         Mockito.`when`(service.create(shortenedUrl)).thenReturn(shortenedUrl1)
@@ -85,8 +86,8 @@ class TestingWebApplicationTest {
     @Test
     fun shouldCreateWithoutAliasAndReturnCreatedShortUrlWithDomain() {
 
-        val shortenUrlRequest = ShortenUrlRequest( fullUrl=shortenedUrl1.fullUrl, customAlias = null)
-        val stubbedShort="stubbedShort"+Random.nextInt();
+        val shortenUrlRequest = ShortenUrlRequest(fullUrl = shortenedUrl1.fullUrl, customAlias = null)
+        val stubbedShort = "stubbedShort" + Random.nextInt();
 
         val shortenedUrl = ShortenedUrl(shortenedUrl1.fullUrl, stubbedShort)
 
@@ -124,16 +125,16 @@ class TestingWebApplicationTest {
             .andExpect(content().string("Invalid input or alias already taken"))
 
         Mockito.verify(service, Mockito.times(1)).create(shortenedUrl)
-
     }
 
     @Test
     fun shouldRedirectToLongUrl() {
+
         Mockito.`when`(service.findById(shortenedUrl1.shortUrl)).thenReturn(shortenedUrl1)
 
         mockMvc.perform(get("/" + shortenedUrl1.shortUrl))
             .andDo(print())
-            .andExpect(status().`is`(302))
+            .andExpect(status().isFound)
             .andExpect(redirectedUrl(shortenedUrl1.fullUrl));
 
         Mockito.verify(service, Mockito.times(1)).findById(shortenedUrl1.shortUrl);
@@ -141,6 +142,7 @@ class TestingWebApplicationTest {
 
     @Test
     fun shouldReturnNotFoundWhenShortUrlNotFound() {
+
         Mockito.`when`(service.findById("notExists")).thenThrow(NoSuchElementException());
 
         mockMvc.perform(get("/notExists"))
@@ -149,5 +151,28 @@ class TestingWebApplicationTest {
             .andExpect(content().string("Alias not found"))
 
         Mockito.verify(service, Mockito.times(1)).findById("notExists");
+    }
+
+    @Test
+    fun shouldDeleteShortURL() {
+
+        mockMvc.perform(delete("/" + shortenedUrl1.shortUrl))
+            .andDo(print())
+            .andExpect(status().isNoContent)
+
+        Mockito.verify(service, Mockito.times(1)).deleteById(shortenedUrl1.shortUrl);
+    }
+
+    @Test
+    fun shouldReturnNotFoundWhenShortUrlNotFoundForDeletion() {
+
+        Mockito.`when`(service.deleteById("notExists")).thenThrow(NoSuchElementException());
+
+        mockMvc.perform(delete("/notExists"))
+            .andDo(print())
+            .andExpect(status().isNotFound)
+            .andExpect(content().string("Alias not found"))
+
+        Mockito.verify(service, Mockito.times(1)).deleteById("notExists");
     }
 }
