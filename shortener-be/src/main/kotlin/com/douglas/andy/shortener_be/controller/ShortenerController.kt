@@ -5,7 +5,7 @@ import com.douglas.andy.shortener_be.model.ShortenUrlRequest
 import com.douglas.andy.shortener_be.model.ShortenUrlResponse
 import com.douglas.andy.shortener_be.model.ShortenedUrl
 import com.douglas.andy.shortener_be.service.ShortenedUrlService
-import com.douglas.andy.shortener_be.shorten.ShortenService
+import com.douglas.andy.shortener_be.shorten.EncodedShortService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @CrossOrigin(origins = ["http://localhost:5173"])
 @RequestMapping("/")
-class ShortenerController(private val service: ShortenedUrlService, private val shortenService: ShortenService) {
+class ShortenerController(private val service: ShortenedUrlService, private val encodedShortService: EncodedShortService) {
 
     @ExceptionHandler
     fun handleNoSuchElementException(ex: NoSuchElementException): ResponseEntity<String> =
@@ -44,7 +44,7 @@ class ShortenerController(private val service: ShortenedUrlService, private val 
             if (!request.customAlias.isNullOrEmpty())
                 ShortenedUrl(request.fullUrl, request.customAlias);
             else
-                ShortenedUrl(request.fullUrl, shortenService.getEncodedShort());
+                ShortenedUrl(request.fullUrl, encodedShortService.getEncodedShort());
 
         val created = service.create(shortened)
         return ResponseEntity( ShortenUrlResponse(created.shortUrl), HttpStatus.CREATED);

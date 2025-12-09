@@ -4,7 +4,7 @@ import com.douglas.andy.shortener_be.exception.ShortURLExistsException
 import com.douglas.andy.shortener_be.model.ShortenUrlRequest
 import com.douglas.andy.shortener_be.model.ShortenedUrl
 import com.douglas.andy.shortener_be.service.ShortenedUrlService
-import com.douglas.andy.shortener_be.shorten.ShortenService
+import com.douglas.andy.shortener_be.shorten.EncodedShortService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.`is`
@@ -37,7 +37,7 @@ class TestingWebApplicationTest {
     private lateinit var service: ShortenedUrlService
 
     @MockitoBean
-    private lateinit var shortenService: ShortenService
+    private lateinit var encodedShortService: EncodedShortService
 
     val shortenedUrl1 = ShortenedUrl("fullUrl1" + Random.nextInt(), "shortUrl1" + Random.nextInt())
     val shortenedUrl2 = ShortenedUrl("fullUrl2" + Random.nextInt(), "shortUrl2" + Random.nextInt())
@@ -90,7 +90,7 @@ class TestingWebApplicationTest {
 
         val shortenedUrl = ShortenedUrl(shortenedUrl1.fullUrl, stubbedShort)
 
-        Mockito.`when`(shortenService.getEncodedShort()).thenReturn(stubbedShort)
+        Mockito.`when`(encodedShortService.getEncodedShort()).thenReturn(stubbedShort)
         Mockito.`when`(service.create(shortenedUrl)).thenReturn(shortenedUrl1)
 
         mockMvc.perform(

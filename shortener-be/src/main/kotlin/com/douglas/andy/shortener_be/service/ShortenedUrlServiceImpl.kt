@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service
 class ShortenedUrlServiceImpl(private val repository: ShortenedUrlRepository, @Value("\${shortener.origin}") private val origin: String) : ShortenedUrlService {
 
     override fun create(shortenedURL: ShortenedUrl): ShortenedUrl {
-        if(repository.existsById(shortenedURL.shortUrl)) throw ShortURLExistsException();
+        if(repository.existsById(shortenedURL.shortUrl)) {
+            throw ShortURLExistsException()
+        };
 
         val savedItem=repository.save(shortenedURL)
         return savedItem.copy(shortUrl = origin+savedItem.shortUrl)

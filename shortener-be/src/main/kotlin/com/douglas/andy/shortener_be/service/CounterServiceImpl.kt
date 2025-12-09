@@ -12,15 +12,14 @@ class CounterServiceImpl(private val repository: CounterRepository) : CounterSer
         const val START_COUNT = 1;
     }
 
-    override fun get(): Int {
+    override fun incrementAndGet(): Int {
         val foundItem=repository.findById(DOCUMENT_ID);
-        if(foundItem.isPresent())
-            return foundItem.get().count
-        else
-            return START_COUNT;
-    }
 
-    override fun set(count: Int): Int {
+        val count=if(foundItem.isPresent())
+            foundItem.get().count+1
+        else
+            START_COUNT;
+
         return repository.save(Counter(id=DOCUMENT_ID,count=count)).count
     }
 }

@@ -1,6 +1,9 @@
 package com.douglas.andy.shortener_be.shorten
 
-class UrlEncoder{
+import org.springframework.stereotype.Component
+
+@Component
+class Encoder{
 
     companion object {
         const val CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

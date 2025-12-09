@@ -2,6 +2,7 @@ package com.douglas.andy.shortener_be.service;
 
 import com.douglas.andy.shortener_be.model.Counter
 import com.douglas.andy.shortener_be.repository.CounterRepository
+import com.douglas.andy.shortener_be.service.CounterServiceImpl.Companion.DOCUMENT_ID
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +11,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.util.Optional
 import kotlin.random.Random
 import kotlin.test.assertEquals
-
 
 @SpringBootTest
 class CounterServiceImplTest {
@@ -22,40 +22,36 @@ class CounterServiceImplTest {
     private lateinit var repository: CounterRepository
 
     @Test
-    fun shouldReturnStartCountIfNoneExistsInRepo() {
+    fun shouldReturnStartCountIfNoneExistsInRepoThenAddIncrementedToRepo() {
+
+        val counter=Counter(id=DOCUMENT_ID,count=CounterServiceImpl.START_COUNT)
 
         Mockito.`when`(repository.findById(CounterServiceImpl.DOCUMENT_ID)).thenReturn(Optional.empty())
-
-        val actual = counterService.get();
-
-        assertEquals(CounterServiceImpl.START_COUNT, actual);
-    }
-
-    @Test
-    fun shouldReturnCountFromRepo() {
-
-        val counter = Counter(id = CounterServiceImpl.DOCUMENT_ID, count = 200)
-
-        Mockito.`when`(repository.findById(CounterServiceImpl.DOCUMENT_ID)).thenReturn(Optional.of<Counter>(counter))
-
-        val actual = counterService.get()
-
-        assertEquals(counter.count, actual)
-    }
-
-    @Test
-    fun shouldSetInRepo() {
-
-        val numToSet = Random.nextInt(1, Integer.MAX_VALUE)
-
-        val counter = Counter(id = 1, count = numToSet)
-
         Mockito.`when`(repository.save(counter)).thenReturn(counter)
 
-        val result = counterService.set(numToSet)
+        val actual = counterService.incrementAndGet();
 
-        assertEquals(numToSet, result)
+        assertEquals(CounterServiceImpl.START_COUNT, actual);
 
         Mockito.verify(repository, Mockito.times(1)).save(counter)
     }
+
+    @Test
+    fun shouldReturnCountPlusOneThenAddIncrementedToRepo() {
+
+        val preNumber=Random.nextInt(1, Integer.MAX_VALUE);
+
+        val counter=Counter(id=DOCUMENT_ID,count=preNumber)
+        val counter2=Counter(id=DOCUMENT_ID,count=preNumber+1)
+
+        Mockito.`when`(repository.findById(CounterServiceImpl.DOCUMENT_ID)).thenReturn(Optional.of(counter))
+        Mockito.`when`(repository.save(counter2)).thenReturn(counter2)
+
+        val actual = counterService.incrementAndGet();
+
+        assertEquals(counter2.count, actual);
+
+        Mockito.verify(repository, Mockito.times(1)).save(counter2)
+    }
+
 }

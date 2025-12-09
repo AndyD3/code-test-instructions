@@ -7,9 +7,9 @@ import kotlin.random.Random
 
 import org.assertj.core.api.Assertions.assertThat;
 
-class UrlEncoderTest {
+class EncoderTest {
 
-    private var encoder=UrlEncoder();
+    private var encoder=Encoder();
 
     @Test
     fun shouldGenerateSameOutputForSameCount() {
