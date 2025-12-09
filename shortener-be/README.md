@@ -1,10 +1,10 @@
 # Back End for URL shortener
 
-TBD - skeleton for now
-This will provide urls to frontend to prove apps run and connecting
+This in the back end which connects to the db which should be ran using docker compose in the root folder.
 
 ## Steps to run
-1. Build the project using
+1. Ensure maven is installed
+2. Build the project using
    `mvn clean install`
-2. Run using `mvn spring-boot:run`
-3. The web application is accessible via http://localhost:8080 with JSON short urls available at http://localhost:8080/shortener/urls
+3. Run using `mvn spring-boot:run`
+4. The web application is accessible via http://localhost:8080 with JSON short urls available at http://localhost:8080/shortener/urls
