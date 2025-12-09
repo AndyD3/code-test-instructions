@@ -26,7 +26,7 @@ Some brief points:
 * Clearly an entire database is overkill for storing a single field. A durable high speed cache would be better.
 
 ### Read and write services
-* The back end service could split into 2 services, 1 for creation and 1 for retrieval; allowing independent scaling. This works well as the 2 traffic for the read would be considerably higher.
+* The back end service could split into 2 services, 1 for creation and 1 for retrieval; allowing independent scaling. This works well as the 2 traffic for the read would be considerably higher and if the write part of the system went down it wouldn't affect the more critical read aspect.
 
 ### Database
 * The database was picked as no relational information is stored and easy to add extra data for example fields such as creation dates, amount used etc
@@ -37,11 +37,11 @@ Some brief points:
 # Considerations for observability.
 * Enable Spring Boot Actuator and instrument with OpenTelemetry. Export the metrics to Prometheus/Grafana and traces to a tracing backend.  
 * Track business metrics: requests per short URL, redirect latency, error rates, cache hit ratio. 
-* We may wish to track the number of hits each URL has, the 302 redirect means that the URL is not being cached and, whilst this creates more traffic, more accurately tracks the usage  
+* We may wish to track the number of hits each URL has, the 302 redirect means that the URL is not being cached and, whilst this creates more traffic, more accurately tracks the usage.
 
 # Deploying to cloud
-* To deploy this anywhere we need something like Kubernetes, which would allow us to describe the structure and desired state of the system. Possibly in conjunction with EKS
-* To setup EKS we should use some form of infrastructure as code option like Terraform
-* load balancers should be used in front of the services (see above) when multiple instances are required. 
-* Cloud provider do provide durable caches such as the popular Redis which could be used for maintaining the count.
+* To deploy this anywhere we need something like Kubernetes, which would allow us to describe the structure and desired state of the system, vital for robustness. Possibly in conjunction with cEKS
+* To setup EKS (or whatever offering we go with) we should use some form of "infrastructure as code" option like Terraform
+* Load balancers should be used in front of the services (see above) when multiple instances are required. 
+* Cloud providers do provide durable caches such as the popular Redis which could be used for maintaining the count.
 * An API gateway should be used for architectural goodness such as rate limiting, authentication/authorization, logging etc
