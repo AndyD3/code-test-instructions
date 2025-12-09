@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { ShortenUrlRequest } from './types'
 import { formToJSON } from 'axios'
 import { useCreateUrl } from './hooks/useCreateUrl'
+import { useDeleteUrl } from './hooks/useDeleteUrl'
 
 const queryClient = new QueryClient()
 
@@ -20,6 +21,7 @@ function URLManager() {
   const { data: shortenedUrls, isLoading, isError} = useReadUrls()
 
   const { mutate: createUrl, status: statusCreateUrl, error: isErrorCreateURL, isSuccess} = useCreateUrl()
+  const { mutate: deleteUrl } = useDeleteUrl()
 
   const emptyFormData = {
     fullUrl: '',
@@ -97,6 +99,7 @@ function URLManager() {
           <tr>
             <th>Short URL</th>
             <th>Full URL</th>
+            <th/>
           </tr>
         </thead>
         <tbody>
@@ -109,6 +112,15 @@ function URLManager() {
                 <tr key={url.shortUrl}>
                   <td><a href={url.shortUrl} target="_blank">{url.shortUrl}</a></td>
                   <td>{url.fullUrl}</td>
+                  <td>
+                    <button
+                      aria-label="delete"
+                      className="caution"
+                      onClick={() => deleteUrl(url.shortUrl!)}
+                    >
+                    Delete
+                    </button>
+                  </td>
                 </tr>
                 )
               )

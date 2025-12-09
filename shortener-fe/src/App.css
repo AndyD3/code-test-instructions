@@ -65,6 +65,10 @@ button {
   background-color: green;
 }
 
+.caution {
+  background-color: red;
+}
+
 .cta:disabled {
   opacity: 0.6;
   cursor: not-allowed;
