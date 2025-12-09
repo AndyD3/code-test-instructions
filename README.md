@@ -1,48 +1,47 @@
 # URL Shortener Coding Task
 
+This is in response to the code task for TPXImpact. 
+
 # Instructions 
-Create the database by running from this folder by utilising the docker compose file in this folder
+Spin up the database by utilising the docker compose file in this folder (this requires a docker environment of course)
 ```
 docker compose up
 ```
-Next, run the front end and back end from their folders (instructions are there in the README files)
+Next, run the front end and back end from their folders (instructions are in the corresponding folders in the README files) 
+The front-end requires npm installed and the backend requires maven.
 
-## Task
+# System Diagrams 
 
-Build a simple **URL shortener** in a ** preferably JVM-based language** (e.g. Java, Kotlin).
+A possible system design
 
-It should:
+![Design diagram](./TPXImpact.drawio.svg)
 
-- Accept a full URL and return a shortened URL.
-- Persist the shortened URLs across restarts.
-- Allow a user to **customise the shortened URL** (e.g. user provides `my-custom-alias` instead of a random string).
-- Expose a **decoupled web frontend** built with a modern framework (e.g., React, Next.js, Vue.js, Angular, Flask with templates). This can be lightweight form/output just to demonstrate interaction with the API. Feel free to use UI frameworks like Bootstrap, Material-UI, Tailwind CSS, GOV.UK design system, etc. to speed up development.
-- Expose a **RESTful API** to perform create/read/delete operations on URLs.  
-  → Refer to the provided [`openapi.yaml`](./openapi.yaml) for API structure and expected behaviour.
-- Include the ability to **delete a shortened URL** via the API.
-- **Have tests**.
-- Be containerised (e.g. Docker).
-- Include instructions for running locally.
+# Considerations for scalability, resilience
 
-## Rules
+Some brief points:
 
-- Fork the repository and work in your fork. Do not push directly to the main repository.
-- We suggest spending no longer than **6-8 hours**, but you can take longer if needed.
-- **Commit often with meaningful messages.**
-- Write tests.
-- Use the provided [`openapi.yaml`](./openapi.yaml) as a reference.
-- Focus on clean, maintainable code.
-- AI tools (e.g., GitHub Copilot, ChatGPT) are allowed, but please **do not** copy-paste large chunks of code. Use them as assistants, not as a replacement for your own work. We will be asking.
+### The Count Service
+*  The count functionality could go its own service with its own storage; allowing independent scaling.
+*  Rather than returning a single count it could return a range of counts thereby reducing traffic.
+* Clearly an entire database is overkill for storing a single field. A durable high speed cache would be better.
 
-## Deliverables
+### Read and write services
+* The back end service could split into 2 services, 1 for creation and 1 for retrieval; allowing independent scaling. This works well as the 2 traffic for the read would be considerably higher.
 
-- Working code.
-- Decoupled web frontend (using a modern framework like React, Next.js, Vue.js, Angular, or Flask with templates).
-- RESTful API matching the OpenAPI spec.
-- Tests.
-- A git commit history that shows your thought process.
-- Dockerfile.
-- README with:
-  - How to build and run locally.
-  - Example usage (frontend and API).
-  - Any notes or assumptions.
+### Database
+* The database was picked as no relational information is stored and easy to add extra data for example fields such as creation dates, amount used etc
+* The database could be partitioned with the `shortUrl` key (consistent hashing) to distribute load evenly.
+* The database could also be replicated to give greater resilience and reduced latency.
+* You could add caching layer (with TTL/LRU) in front of the database due to high reads and hot lookups.
+
+# Considerations for observability.
+* Enable Spring Boot Actuator and instrument with OpenTelemetry. Export the metrics to Prometheus/Grafana and traces to a tracing backend.  
+* Track business metrics: requests per short URL, redirect latency, error rates, cache hit ratio. 
+* We may wish to track the number of hits each URL has, the 302 redirect means that the URL is not being cached and, whilst this creates more traffic, more accurately tracks the usage  
+
+# Deploying to cloud
+* To deploy this anywhere we need something like Kubernetes, which would allow us to describe the structure and desired state of the system. Possibly in conjunction with EKS
+* To setup EKS we should use some form of infrastructure as code option like Terraform
+* load balancers should be used in front of the services (see above) when multiple instances are required. 
+* Cloud provider do provide durable caches such as the popular Redis which could be used for maintaining the count.
+* An API gateway should be used for architectural goodness such as rate limiting, authentication/authorization, logging etc
