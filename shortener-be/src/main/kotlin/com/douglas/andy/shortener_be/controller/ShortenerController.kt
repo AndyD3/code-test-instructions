@@ -5,18 +5,18 @@ import com.douglas.andy.shortener_be.model.ShortenUrlRequest
 import com.douglas.andy.shortener_be.model.ShortenUrlResponse
 import com.douglas.andy.shortener_be.model.ShortenedUrl
 import com.douglas.andy.shortener_be.service.ShortenedUrlService
-import com.douglas.andy.shortener_be.shorten.EncodedShortService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import com.douglas.andy.shortener_be.alias.AliasGenerator
 
 @RestController
 @CrossOrigin(origins = ["http://localhost:5173"])
 @RequestMapping("/")
 class ShortenerController(
     private val service: ShortenedUrlService,
-    private val encodedShortService: EncodedShortService
+    private val aliasGenerator: AliasGenerator
 ) {
 
     @ExceptionHandler
@@ -43,11 +43,14 @@ class ShortenerController(
         // TODO (if I have time spare) check for empty long URL - returns bad request if body bad but would be better to have message "Invalid input or alias already taken"
         // TODO the short URL generated could be duplicate of an alias created shortened URL
 
+        //can this call a different method in the the service based on the type of shortenurlrequest?
+
+
         val shortened =
             if (!request.customAlias.isNullOrEmpty())
                 ShortenedUrl(request.fullUrl, request.customAlias);
             else
-                ShortenedUrl(request.fullUrl, encodedShortService.getEncodedShort());
+                ShortenedUrl(request.fullUrl, aliasGenerator.generate());
 
         val created = service.create(shortened)
         return ResponseEntity(ShortenUrlResponse(created.shortUrl), HttpStatus.CREATED);

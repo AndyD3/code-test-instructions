@@ -40,8 +40,7 @@ Some brief points:
 * We may wish to track the number of hits each URL has, the 302 redirect means that the URL is not being cached and, whilst this creates more traffic, more accurately tracks the usage.
 
 # Deploying to cloud
-* To deploy this anywhere we need something like Kubernetes, which would allow us to describe the structure and desired state of the system, vital for robustness. Possibly in conjunction with cEKS
+* To deploy this anywhere we need something like Kubernetes, which would allow us to describe the structure and desired state of the system, vital for robustness. Possibly in conjunction with EKS
 * To setup EKS (or whatever offering we go with) we should use some form of "infrastructure as code" option like Terraform
 * Load balancers should be used in front of the services (see above) when multiple instances are required. 
-* Cloud providers do provide durable caches such as the popular Redis which could be used for maintaining the count.
 * An API gateway should be used for architectural goodness such as rate limiting, authentication/authorization, logging etc

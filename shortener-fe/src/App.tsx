@@ -51,7 +51,6 @@ function URLManager() {
     <>
       <h1>URL Shortener tester</h1>
       
-
       <div className="label-wrap">
         <label>Full URL (required)</label>
         <input
@@ -109,7 +108,8 @@ function URLManager() {
               </tr>
             ) : (
               shortenedUrls?.map((url) => ( 
-                <tr key={url.shortUrl}>
+                <tr key={url.alias}>
+                  <td>{url.alias}</td>
                   <td><a href={url.shortUrl} target="_blank">{url.shortUrl}</a></td>
                   <td>{url.fullUrl}</td>
                   <td>
@@ -123,9 +123,22 @@ function URLManager() {
                   </td>
                 </tr>
                 )
-              )
+              )  
             )
           }
+           <tr>
+              <td colSpan={3}></td>
+              <td>
+                <button
+                  aria-label="delete"
+                  className="caution"
+                  onClick={() => deleteUrl("non_existant_url")}
+                >
+                Delete (test non existant alias)
+                </button>
+              </td>
+           </tr>
+
         </tbody>
       </table>
     </>

@@ -4,7 +4,6 @@ import com.douglas.andy.shortener_be.exception.ShortURLExistsException
 import com.douglas.andy.shortener_be.model.ShortenUrlRequest
 import com.douglas.andy.shortener_be.model.ShortenedUrl
 import com.douglas.andy.shortener_be.service.ShortenedUrlService
-import com.douglas.andy.shortener_be.shorten.EncodedShortService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.`is`
@@ -24,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import kotlin.random.Random
+import com.douglas.andy.shortener_be.alias.AliasGenerator
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,7 +38,7 @@ class TestingWebApplicationTest {
     private lateinit var service: ShortenedUrlService
 
     @MockitoBean
-    private lateinit var encodedShortService: EncodedShortService
+    private lateinit var aliasGenerator: AliasGenerator
 
     val shortenedUrl1 = ShortenedUrl("fullUrl1" + Random.nextInt(), "shortUrl1" + Random.nextInt())
     val shortenedUrl2 = ShortenedUrl("fullUrl2" + Random.nextInt(), "shortUrl2" + Random.nextInt())
@@ -87,11 +87,11 @@ class TestingWebApplicationTest {
     fun shouldCreateWithoutAliasAndReturnCreatedShortUrlWithDomain() {
 
         val shortenUrlRequest = ShortenUrlRequest(fullUrl = shortenedUrl1.fullUrl, customAlias = null)
-        val stubbedShort = "stubbedShort" + Random.nextInt();
+        val stubbedAlias = "stubbedAlias" + Random.nextInt();
 
-        val shortenedUrl = ShortenedUrl(shortenedUrl1.fullUrl, stubbedShort)
+        val shortenedUrl = ShortenedUrl(shortenedUrl1.fullUrl, stubbedAlias)
 
-        Mockito.`when`(encodedShortService.getEncodedShort()).thenReturn(stubbedShort)
+        Mockito.`when`(aliasGenerator.generate()).thenReturn(stubbedAlias)
         Mockito.`when`(service.create(shortenedUrl)).thenReturn(shortenedUrl1)
 
         mockMvc.perform(
