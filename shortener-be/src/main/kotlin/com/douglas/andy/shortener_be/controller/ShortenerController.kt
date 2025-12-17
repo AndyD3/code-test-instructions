@@ -1,15 +1,16 @@
 package com.douglas.andy.shortener_be.controller
 
+import com.douglas.andy.shortener_be.alias.AliasGenerator
 import com.douglas.andy.shortener_be.exception.ShortURLExistsException
 import com.douglas.andy.shortener_be.model.ShortenUrlRequest
 import com.douglas.andy.shortener_be.model.ShortenUrlResponse
-import com.douglas.andy.shortener_be.model.ShortenedUrl
+import com.douglas.andy.shortener_be.model.ShortenedUrlDAO
+import com.douglas.andy.shortener_be.model.UrlEntity
 import com.douglas.andy.shortener_be.service.ShortenedUrlService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import com.douglas.andy.shortener_be.alias.AliasGenerator
 
 @RestController
 @CrossOrigin(origins = ["http://localhost:5173"])
@@ -34,7 +35,7 @@ class ShortenerController(
 
 
     @GetMapping("/urls")
-    fun list(): ResponseEntity<List<ShortenedUrl>> = ResponseEntity.ok(service.findAll())
+    fun list(): ResponseEntity<List<ShortenedUrlDAO>> = ResponseEntity.ok(service.findAll())
 
 
     @PostMapping("/shorten")
@@ -48,12 +49,12 @@ class ShortenerController(
 
         val shortened =
             if (!request.customAlias.isNullOrEmpty())
-                ShortenedUrl(request.fullUrl, request.customAlias);
+                UrlEntity(request.fullUrl, request.customAlias)
             else
-                ShortenedUrl(request.fullUrl, aliasGenerator.generate());
+                UrlEntity(request.fullUrl, aliasGenerator.generate())
 
         val created = service.create(shortened)
-        return ResponseEntity(ShortenUrlResponse(created.shortUrl), HttpStatus.CREATED);
+        return ResponseEntity(ShortenUrlResponse(created.alias), HttpStatus.CREATED)
     }
 
     @DeleteMapping("/{shortURL}")

@@ -2,7 +2,7 @@ package com.douglas.andy.shortener_be.model
 
 import org.springframework.data.annotation.Id;
 
-data class ShortenedUrl(
+data class UrlEntity(
     val fullUrl: String,
-    @Id val shortUrl: String
+    @Id val alias: String
 )

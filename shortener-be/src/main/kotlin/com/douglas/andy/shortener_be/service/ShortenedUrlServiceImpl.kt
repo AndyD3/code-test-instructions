@@ -1,7 +1,8 @@
 package com.douglas.andy.shortener_be.service
 
-import com.douglas.andy.shortener_be.model.ShortenedUrl
 import com.douglas.andy.shortener_be.exception.ShortURLExistsException
+import com.douglas.andy.shortener_be.model.ShortenedUrlDAO
+import com.douglas.andy.shortener_be.model.UrlEntity
 import com.douglas.andy.shortener_be.repository.ShortenedUrlRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -9,21 +10,24 @@ import org.springframework.stereotype.Service
 @Service
 class ShortenedUrlServiceImpl(private val repository: ShortenedUrlRepository, @Value("\${shortener.origin}") private val origin: String) : ShortenedUrlService {
 
-    override fun create(shortenedURL: ShortenedUrl): ShortenedUrl {
-        if(repository.existsById(shortenedURL.shortUrl)) {
+    override fun create(urlEntity: UrlEntity): UrlEntity {
+        if (repository.existsById(urlEntity.alias)) {
             throw ShortURLExistsException()
         };
 
-        val savedItem=repository.save(shortenedURL)
-        return savedItem.copy(shortUrl = origin+savedItem.shortUrl)
+        val savedItem = repository.save(urlEntity)
+        return savedItem.copy(alias = origin + savedItem.alias)
     }
 
-    override fun findAll(): List<ShortenedUrl> {
-        val returnedItems = repository.findAll();
-        return returnedItems.map { it.copy(shortUrl = origin+it.shortUrl) }
+    override fun findAll(): ArrayList<ShortenedUrlDAO> {
+        val shortenedURLs = ArrayList<ShortenedUrlDAO>()
+
+        repository.findAll().map { shortenedURLs.add(ShortenedUrlDAO(it.alias, it.fullUrl, origin + it.alias)) }
+
+        return shortenedURLs
     }
 
-    override fun findById(id: String) : ShortenedUrl {
+    override fun findById(id: String): UrlEntity {
         val foundItem=repository.findById(id);
         return foundItem.orElseThrow();
     }

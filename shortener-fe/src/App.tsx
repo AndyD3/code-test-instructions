@@ -96,6 +96,7 @@ function URLManager() {
       <table className="dataTable">
         <thead>
           <tr>
+            <th>Alias</th>
             <th>Short URL</th>
             <th>Full URL</th>
             <th/>
