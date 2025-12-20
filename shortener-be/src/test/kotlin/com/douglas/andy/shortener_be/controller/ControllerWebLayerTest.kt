@@ -9,6 +9,8 @@ import com.douglas.andy.shortener_be.service.ShortenedUrlService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,15 +39,121 @@ class TestingWebApplicationTest {
     @MockitoBean
     private lateinit var aliasCreator: AliasCreator
 
-    val shortenedUrl1 = UrlEntity("fullUrl1" + Random.nextInt(), "shortUrl1" + Random.nextInt())
 
-    val shortenedUrlDAO1 =
-        ShortenedUrlDAO("alias1" + Random.nextInt(), "fullUrl1" + Random.nextInt(), "shortUrl1" + Random.nextInt())
-    val shortenedUrlDAO2 =
-        ShortenedUrlDAO("alias2" + Random.nextInt(), "fullUrl2" + Random.nextInt(), "shortUrl2" + Random.nextInt())
+    val stubbedUrlL = "https://en.wikipedia.org/wiki/Doge_(meme)" + Random.nextInt()
+    val stubbedAlias = "stubbedAlias" + Random.nextInt()
+
+    @Nested
+    @DisplayName("/shorten")
+    inner class TestShorten {
+
+        @Test
+        fun shouldCreateAndReturnSuccessWithValidUrlAndWithoutAlias() {
+
+            val urlEntity = UrlEntity(stubbedUrlL, stubbedAlias)
+            val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, null)
+
+            Mockito.`when`(aliasCreator.create(shortenUrlRequest)).thenReturn(urlEntity)
+
+            mockMvc.perform(
+                post("/shorten")
+                    .content(objectMapper.writeValueAsString(shortenUrlRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$.shortUrl", `is`(urlEntity.alias)))
+
+            Mockito.verify(aliasCreator, Mockito.times(1)).create(shortenUrlRequest)
+        }
+
+        @Test
+        fun shouldCreateAndReturnSuccessWithValidUrlAndWithEmptyAliasTreatAsEmpty() {
+
+            val shortenedUrl1 = UrlEntity(stubbedUrlL, stubbedAlias)
+            val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, "")
+
+            Mockito.`when`(aliasCreator.create(shortenUrlRequest)).thenReturn(shortenedUrl1)
+
+            mockMvc.perform(
+                post("/shorten")
+                    .content(objectMapper.writeValueAsString(shortenUrlRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$.shortUrl", `is`(shortenedUrl1.alias)))
+
+            Mockito.verify(aliasCreator, Mockito.times(1)).create(shortenUrlRequest)
+        }
+
+        @Test
+        fun shouldCreateAndReturnSuccessWithCorrectURLAndAlias() {
+
+            val shortenedUrl1 = UrlEntity(stubbedUrlL, stubbedAlias)
+            val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, stubbedAlias)
+
+            Mockito.`when`(aliasCreator.create(shortenUrlRequest)).thenReturn(shortenedUrl1)
+
+            mockMvc.perform(
+                post("/shorten")
+                    .content(objectMapper.writeValueAsString(shortenUrlRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+                .andDo(print())
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$.shortUrl", `is`(shortenedUrl1.alias)))
+
+            Mockito.verify(aliasCreator, Mockito.times(1)).create(shortenUrlRequest)
+        }
+
+        @Test
+        fun shouldCreateThenReturnErrorWhenCustomAliasAlreadyExists() {
+
+            UrlEntity(stubbedUrlL, stubbedAlias)
+            val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, null)
+
+            Mockito.`when`(aliasCreator.create(shortenUrlRequest)).thenThrow(ShortURLExistsException())
+
+            mockMvc.perform(
+                post("/shorten")
+                    .content(objectMapper.writeValueAsString(shortenUrlRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+                .andDo(print())
+                .andExpect(status().isBadRequest)
+                .andExpect(content().string("Invalid input or alias already taken"))
+
+            Mockito.verify(aliasCreator, Mockito.times(1)).create(shortenUrlRequest)
+        }
+
+        @Test
+        fun shouldReturnValidationErrorWhenValidationRulesBroken() {
+
+            val notValidUrl = "thisIsNotAValidUrl"
+
+            val shortenUrlRequest = ShortenUrlRequest(notValidUrl, stubbedAlias)
+
+            mockMvc.perform(
+                post("/shorten")
+                    .content(objectMapper.writeValueAsString(shortenUrlRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+                .andDo(print())
+                .andExpect(status().isBadRequest)
+                .andExpect(content().string("Invalid input or alias already taken"))
+
+            Mockito.verifyNoInteractions(aliasCreator)
+        }
+    }
 
     @Test
     fun shouldGetAllAsList() {
+
+        val shortenedUrlDAO1 =
+            ShortenedUrlDAO("alias1" + Random.nextInt(), "fullUrl1" + Random.nextInt(), "shortUrl1" + Random.nextInt())
+        val shortenedUrlDAO2 =
+            ShortenedUrlDAO("alias2" + Random.nextInt(), "fullUrl2" + Random.nextInt(), "shortUrl2" + Random.nextInt())
 
         val urlList = listOf(shortenedUrlDAO1, shortenedUrlDAO2)
 
@@ -67,60 +175,18 @@ class TestingWebApplicationTest {
     }
 
     @Test
-    fun shouldCallCreateWithSentShortenRequest() {
-
-        val stubbedUrlL = "fullUrl1" + Random.nextInt()
-        val stubbedAlias = "stubbedAlias" + Random.nextInt()
-        val shortenedUrl1 = UrlEntity(stubbedUrlL, stubbedAlias)
-        val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, null)
-
-        Mockito.`when`(aliasCreator.create(shortenUrlRequest)).thenReturn(shortenedUrl1)
-
-        mockMvc.perform(
-            post("/shorten")
-                .content(objectMapper.writeValueAsString(shortenUrlRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andDo(print())
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$.shortUrl", `is`(shortenedUrl1.alias)))
-
-        Mockito.verify(aliasCreator, Mockito.times(1)).create(shortenUrlRequest)
-    }
-
-
-    @Test
-    fun shouldCallCreateThenReturnErrorWhenCustomAliasAlreadyExists() {
-        val stubbedUrlL = "fullUrl1" + Random.nextInt()
-        val stubbedAlias = "stubbedAlias" + Random.nextInt()
-        UrlEntity(stubbedUrlL, stubbedAlias)
-        val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, null)
-
-        Mockito.`when`(aliasCreator.create(shortenUrlRequest)).thenThrow(ShortURLExistsException())
-
-        mockMvc.perform(
-            post("/shorten")
-                .content(objectMapper.writeValueAsString(shortenUrlRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andDo(print())
-            .andExpect(status().isBadRequest)
-            .andExpect(content().string("Invalid input or alias already taken"))
-
-        Mockito.verify(aliasCreator, Mockito.times(1)).create(shortenUrlRequest)
-    }
-
-    @Test
     fun shouldRedirectToLongUrl() {
 
-        Mockito.`when`(service.findById(shortenedUrl1.alias)).thenReturn(shortenedUrl1)
+        val urlEntity = UrlEntity(stubbedUrlL, stubbedAlias)
 
-        mockMvc.perform(get("/" + shortenedUrl1.alias))
+        Mockito.`when`(service.findById(urlEntity.alias)).thenReturn(urlEntity)
+
+        mockMvc.perform(get("/" + urlEntity.alias))
             .andDo(print())
             .andExpect(status().isFound)
-            .andExpect(redirectedUrl(shortenedUrl1.fullUrl))
+            .andExpect(redirectedUrl(urlEntity.fullUrl))
 
-        Mockito.verify(service, Mockito.times(1)).findById(shortenedUrl1.alias)
+        Mockito.verify(service, Mockito.times(1)).findById(urlEntity.alias)
     }
 
     @Test
@@ -139,11 +205,11 @@ class TestingWebApplicationTest {
     @Test
     fun shouldDeleteShortURL() {
 
-        mockMvc.perform(delete("/" + shortenedUrl1.alias))
+        mockMvc.perform(delete("/" + stubbedAlias))
             .andDo(print())
             .andExpect(status().isNoContent)
 
-        Mockito.verify(service, Mockito.times(1)).deleteById(shortenedUrl1.alias)
+        Mockito.verify(service, Mockito.times(1)).deleteById(stubbedAlias)
     }
 
     @Test
