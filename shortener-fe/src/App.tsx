@@ -3,12 +3,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useReadUrls } from './hooks/useReadShortenedUrls'
 import { useState } from 'react'
 import { ShortenUrlRequest } from './types'
-import { formToJSON } from 'axios'
 import { useCreateUrl } from './hooks/useCreateUrl'
 import { useDeleteUrl } from './hooks/useDeleteUrl'
+import { Toaster } from 'react-hot-toast'
 
 const queryClient = new QueryClient()
-
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -20,7 +19,7 @@ export default function App() {
 function URLManager() {
   const { data: shortenedUrls, isLoading, isError} = useReadUrls()
 
-  const { mutate: createUrl, status: statusCreateUrl, error: isErrorCreateURL, isSuccess} = useCreateUrl()
+  const { mutate: createUrl } = useCreateUrl()
   const { mutate: deleteUrl } = useDeleteUrl()
 
   const emptyFormData = {
@@ -49,6 +48,14 @@ function URLManager() {
 
   return (
     <>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 5000,
+          removeDelay: 1000
+        }}        
+      />
       <h1>URL Shortener tester</h1>
       
       <div className="label-wrap">
@@ -83,14 +90,8 @@ function URLManager() {
         </button>
       </div>
 
-      
-      {isSuccess && <div style={{color: "green"}}>Created successfully</div>}
-
-      {isErrorCreateURL && <div style={{color: "red"}}>An error has occurred creating short url</div>}
-
       {isError && <div style={{color: "red"}}>An error has occurred reading URLs...</div>}
-
-      {isLoading && <div>Loading...</div>}    
+      {isLoading && <div>Loading URLs...</div>}    
 
       <h2>Stored URLs</h2>
       <table className="dataTable">
