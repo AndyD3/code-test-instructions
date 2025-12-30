@@ -1,10 +1,11 @@
 package com.douglas.andy.shortener_be.alias
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.security.SecureRandom
 
 @Component
-class AliasGenerator (val length:Int=7){
+class AliasGenerator (@Value("\${shortener.alias.length}") val length: Int){
 
   companion object {
       const val CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
