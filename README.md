@@ -3,12 +3,14 @@
 This is in response to the code task for TPXImpact. 
 
 # Instructions 
-Spin up the database by utilising the docker compose file in this folder (this requires a docker environment of course)
+Spin up the database by utilising the docker compose file in this root folder (this requires a docker environment of course)
 ```
 docker compose up
 ```
 Next, run the front end and back end from their folders (instructions are in the corresponding folders in the README files) 
 The front-end requires npm installed and the backend requires maven.
+
+In addition you can also run monitoring on the application.  This also has its corresponding `monitoring` folder with the instructions inside its README.
 
 # System Diagrams 
 
