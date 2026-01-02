@@ -12,10 +12,12 @@ h1 {
 
 .dataTable {
   table-layout: auto;
-  width: 90%;
+  width: 90%; 
   margin: 0 auto;
   font-family: sans-serif;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  overflow:hidden;
+  table-layout:fixed;
 }
 
 .dataTable thead tr {
@@ -31,13 +33,14 @@ h1 {
   text-overflow: ellipsis;
   word-wrap: break-word;
   padding: 12px 15px;
+  text-align: left;
 }
 
 .dataTable tbody tr {
   border-bottom: 1px solid #dddddd;
 }
 .dataTable tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
+  background-color: lightgray
 }
 
 .dataTable tbody tr:last-of-type {

@@ -104,6 +104,20 @@ function URLManager() {
           </tr>
         </thead>
         <tbody>
+        <tr>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>
+                <button
+                  aria-label="delete"
+                  className="caution"
+                  onClick={() => deleteUrl("non_existant_url")}
+                >
+                Delete (test non existant alias)
+                </button>
+              </td>
+           </tr>          
           {shortenedUrls?.length == 0 ? (
               <tr>
                 <td colSpan={3}>No Urls</td>
@@ -128,19 +142,6 @@ function URLManager() {
               )  
             )
           }
-           <tr>
-              <td colSpan={3}></td>
-              <td>
-                <button
-                  aria-label="delete"
-                  className="caution"
-                  onClick={() => deleteUrl("non_existant_url")}
-                >
-                Delete (test non existant alias)
-                </button>
-              </td>
-           </tr>
-
         </tbody>
       </table>
     </>
