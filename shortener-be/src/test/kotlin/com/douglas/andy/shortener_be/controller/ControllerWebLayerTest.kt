@@ -88,7 +88,7 @@ class TestingWebApplicationTest {
         }
 
         @Test
-        fun shouldCreateAndReturnSuccessWithCorrectURLAndAlias() {
+        fun shouldCreateAndReturnSuccessWithValidURLAndAlias() {
 
             val shortenedUrl1 = UrlEntity(stubbedUrlL, stubbedAlias)
             val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, stubbedAlias)
@@ -111,7 +111,7 @@ class TestingWebApplicationTest {
         fun shouldCreateThenReturnErrorWhenCustomAliasAlreadyExists() {
 
             UrlEntity(stubbedUrlL, stubbedAlias)
-            val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, null)
+            val shortenUrlRequest = ShortenUrlRequest(stubbedUrlL, stubbedAlias)
 
             Mockito.`when`(aliasCreator.create(shortenUrlRequest)).thenThrow(ShortURLExistsException())
 
@@ -190,7 +190,7 @@ class TestingWebApplicationTest {
     }
 
     @Test
-    fun shouldReturnNotFoundWhenShortUrlNotFound() {
+    fun shouldReturnNotFoundWhenShortUrlNotFoundForRedirection() {
 
         Mockito.`when`(service.findById("notExists")).thenThrow(NoSuchElementException())
 

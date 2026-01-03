@@ -4,12 +4,23 @@ This in the back end which connects to the db which should be ran using docker c
 
 ## Steps to run
 1. Ensure maven is installed
-2. Build the project using
+2. Build the project and run unit tests using
    `mvn clean install`
 3. Run using `mvn spring-boot:run`
 4. The web application is accessible via http://localhost:8080 with JSON short urls available at http://localhost:8080/urls
 
-## Testing 
+## Running the automated tests
+
+To run just the unit tests use:
+```
+mvn clean test
+```
+To run the integration tests (requires the database to be up and running - see root folder) use:
+```
+mvn failsafe:integration-test
+```
+
+## Manual Testing 
 
 Although the supplied front end can be used to test the application curl commands can also be used.
 
