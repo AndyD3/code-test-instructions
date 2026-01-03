@@ -58,6 +58,13 @@ curl --request GET \
 --url http://localhost:8080/urls \
 ```
 
+To retrieve urls in a paginated fashion in JSON we supply something like the following 
+where, when supplied, sortDirection can be *ASC* or *DESC* and sortField can be *FULLURL* or *ALIAS* (default)
+```
+curl --request GET \
+--url 'http://localhost:8080/paginatedUrls?page=1&sizePerPage=2&sortDirection=ASC&sortField=FULLURL' \
+```
+
 To delete a url use the delete command, specifying the short url for example:
 ```
 curl --request DELETE \

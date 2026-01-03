@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -47,6 +50,17 @@ class ShortenerController(
 
     @GetMapping("/urls")
     fun list(): ResponseEntity<List<ShortenedUrlDAO>> = ResponseEntity.ok(service.findAll())
+
+    @GetMapping("/paginatedUrls")
+    fun findAllByPage(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "5") sizePerPage: Int,
+        @RequestParam(defaultValue = "ALIAS") sortField: SortField,
+        @RequestParam(defaultValue = "DESC") sortDirection: Sort.Direction
+    ): ResponseEntity<List<ShortenedUrlDAO>> {
+        val pageable: Pageable = PageRequest.of(page, sizePerPage, sortDirection, sortField.value)
+        return ResponseEntity.ok(service.findAllByPage(pageable))
+    }
 
     @PostMapping("/shorten")
     fun create(@RequestBody @Valid request: ShortenUrlRequest): ResponseEntity<ShortenUrlResponse> {

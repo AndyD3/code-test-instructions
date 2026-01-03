@@ -2,6 +2,9 @@
 
 This is in response to the code task for TPXImpact. 
 
+Note: I've added an extra end point to the API. Retrieving all the URLs isn't a scalable option past a few dozen URLs so I added a pagable version which is mentioned further in the 
+backend docs and is testable from the front end.
+
 # Instructions 
 Spin up the database by utilising the docker compose file in this root folder (this requires a docker environment of course)
 ```
@@ -21,6 +24,11 @@ A possible system design
 # Considerations for scalability, resilience
 
 Some brief points:
+
+### Security
+
+* Security wasn't added as it often obfuscates a coding test like this. However it would clearly be required that only a registered user could create a url, and only the creating user 
+being able to delete it. To aid this an extra field could be added to the table to store which user created it. Potentially also cleanup functions would delete urls created by an expired user.
 
 ### Containerisation
 * For speed of development mongo autoconfiguration has been used, this would have to be changed in order to expand the containerisation for a 

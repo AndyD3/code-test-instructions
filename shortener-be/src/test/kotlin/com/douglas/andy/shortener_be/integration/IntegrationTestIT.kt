@@ -140,9 +140,9 @@ class IntegrationTestIT {
     fun shouldGetAllAsList() {
 
         val shortenUrlRequest =
-            ShortenUrlRequest(stubbedUrlL + Random.nextInt(), "shortUrl1" + Random.nextInt())
+            ShortenUrlRequest(stubbedUrlL, "shortUrl1" + Random.nextInt())
         val shortenUrlRequest2 =
-            ShortenUrlRequest(stubbedUrlL + Random.nextInt(), "shortUrl2" + Random.nextInt())
+            ShortenUrlRequest(stubbedUrlL, "shortUrl2" + Random.nextInt())
 
         shortenUrl(shortenUrlRequest)
         shortenUrl(shortenUrlRequest2)
@@ -202,4 +202,158 @@ class IntegrationTestIT {
             .andExpect(status().isNotFound)
             .andExpect(content().string("Alias not found"))
     }
+
+    @Nested
+    @DisplayName("/paginatedUrls")
+    inner class TestPaginatedUrls {
+
+        val baseURL = "https://en.wikipedia.org/wiki/";
+
+        val shortenUrlRequest =
+            ShortenUrlRequest(baseURL+"b" + Random.nextInt(), "a_shortUrl" + Random.nextInt())
+        val shortenUrlRequest2 =
+            ShortenUrlRequest(baseURL+"a" + Random.nextInt(), "b_shortUrl" + Random.nextInt())
+        val shortenUrlRequest3 =
+            ShortenUrlRequest(baseURL+"d" + Random.nextInt(), "c_shortUrl" + Random.nextInt())
+        val shortenUrlRequest4 =
+            ShortenUrlRequest(baseURL+"f" + Random.nextInt(), "d_shortUrl" + Random.nextInt())
+        val shortenUrlRequest5 =
+            ShortenUrlRequest(baseURL+"e" + Random.nextInt(), "e_shortUrl" + Random.nextInt())
+        val shortenUrlRequest6 =
+            ShortenUrlRequest(baseURL+"c" + Random.nextInt(), "f_shortUrl" + Random.nextInt())
+
+
+
+        @BeforeEach
+        fun setupDatabase() {
+            shortenUrl(shortenUrlRequest4)
+            shortenUrl(shortenUrlRequest3)
+            shortenUrl(shortenUrlRequest)
+            shortenUrl(shortenUrlRequest2)
+            shortenUrl(shortenUrlRequest5)
+            shortenUrl(shortenUrlRequest6)
+
+        }
+
+        @Test
+        fun shouldGetFirstPage5InAliasDescendingOrderAsDefault() {
+
+            mockMvc.perform(get("/paginatedUrls"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize<UrlEntity>(5)))
+                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
+                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
+
+                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+
+                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+
+                .andExpect(jsonPath("$[3].alias", `is`(shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$[3].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
+                .andExpect(jsonPath("$[3].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
+
+                .andExpect(jsonPath("$[4].alias", `is`(shortenUrlRequest2.customAlias)))
+                .andExpect(jsonPath("$[4].fullUrl", `is`(shortenUrlRequest2.fullUrl)))
+                .andExpect(jsonPath("$[4].shortUrl", `is`(origin + shortenUrlRequest2.customAlias)))
+        }
+
+        @Test
+        fun shouldGetPageAsSpecified() {
+            //zero based
+            mockMvc.perform(get("/paginatedUrls?page=1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize<UrlEntity>(1)))
+                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest.fullUrl)))
+                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
+        }
+
+        @Test
+        fun shouldGetPageSizeAsAsSpecified() {
+            //zero based
+            mockMvc.perform(get("/paginatedUrls?sizePerPage=3"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize<UrlEntity>(3)))
+                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
+                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+        }
+
+        @Test
+        fun shouldGetSortDirectionAsSpecified() {
+
+            mockMvc.perform(get("/paginatedUrls?sortDirection=ASC"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize<UrlEntity>(5)))
+                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest.fullUrl)))
+                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
+
+                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest2.customAlias)))
+                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest2.fullUrl)))
+                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest2.customAlias)))
+
+                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
+                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
+
+                .andExpect(jsonPath("$[3].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$[3].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$[3].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+
+                .andExpect(jsonPath("$[4].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$[4].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$[4].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+        }
+
+        @Test
+        fun shouldGetByFieldAsSpecified() {
+
+            mockMvc.perform(get("/paginatedUrls?sortField=FULLURL"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize<UrlEntity>(5)))
+                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+
+                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+
+                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
+                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
+
+                .andExpect(jsonPath("$[3].alias", `is`(shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$[3].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
+                .andExpect(jsonPath("$[3].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
+
+                .andExpect(jsonPath("$[4].alias", `is`(shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$[4].fullUrl", `is`(shortenUrlRequest.fullUrl)))
+                .andExpect(jsonPath("$[4].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
+        }
+
+    }
+
 }
