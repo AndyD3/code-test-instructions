@@ -242,26 +242,26 @@ class IntegrationTestIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize<UrlEntity>(5)))
-                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest6.customAlias)))
-                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
-                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$.content", hasSize<UrlEntity>(5)))
+                .andExpect(jsonPath("$.content[0].alias", `is`(shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$.content[0].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
+                .andExpect(jsonPath("$.content[0].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
 
-                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest5.customAlias)))
-                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
-                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[1].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$.content[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
 
-                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest4.customAlias)))
-                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
-                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content[2].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content[2].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$.content[2].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
 
-                .andExpect(jsonPath("$[3].alias", `is`(shortenUrlRequest3.customAlias)))
-                .andExpect(jsonPath("$[3].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
-                .andExpect(jsonPath("$[3].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$.content[3].alias", `is`(shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$.content[3].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
+                .andExpect(jsonPath("$.content[3].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
 
-                .andExpect(jsonPath("$[4].alias", `is`(shortenUrlRequest2.customAlias)))
-                .andExpect(jsonPath("$[4].fullUrl", `is`(shortenUrlRequest2.fullUrl)))
-                .andExpect(jsonPath("$[4].shortUrl", `is`(origin + shortenUrlRequest2.customAlias)))
+                .andExpect(jsonPath("$.content[4].alias", `is`(shortenUrlRequest2.customAlias)))
+                .andExpect(jsonPath("$.content[4].fullUrl", `is`(shortenUrlRequest2.fullUrl)))
+                .andExpect(jsonPath("$.content[4].shortUrl", `is`(origin + shortenUrlRequest2.customAlias)))
         }
 
         @Test
@@ -271,10 +271,10 @@ class IntegrationTestIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize<UrlEntity>(1)))
-                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest.customAlias)))
-                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest.fullUrl)))
-                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$.content", hasSize<UrlEntity>(1)))
+                .andExpect(jsonPath("$.content[0].alias", `is`(shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$.content[0].fullUrl", `is`(shortenUrlRequest.fullUrl)))
+                .andExpect(jsonPath("$.content[0].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
         }
 
         @Test
@@ -284,16 +284,16 @@ class IntegrationTestIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize<UrlEntity>(3)))
-                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest6.customAlias)))
-                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
-                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
-                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest5.customAlias)))
-                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
-                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
-                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest4.customAlias)))
-                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
-                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content", hasSize<UrlEntity>(3)))
+                .andExpect(jsonPath("$.content[0].alias", `is`(shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$.content[0].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
+                .andExpect(jsonPath("$.content[0].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$.content[1].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$.content[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[2].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content[2].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$.content[2].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
         }
 
         @Test
@@ -303,26 +303,26 @@ class IntegrationTestIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize<UrlEntity>(5)))
-                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest.customAlias)))
-                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest.fullUrl)))
-                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$.content", hasSize<UrlEntity>(5)))
+                .andExpect(jsonPath("$.content[0].alias", `is`(shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$.content[0].fullUrl", `is`(shortenUrlRequest.fullUrl)))
+                .andExpect(jsonPath("$.content[0].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
 
-                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest2.customAlias)))
-                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest2.fullUrl)))
-                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest2.customAlias)))
+                .andExpect(jsonPath("$.content[1].alias", `is`(shortenUrlRequest2.customAlias)))
+                .andExpect(jsonPath("$.content[1].fullUrl", `is`(shortenUrlRequest2.fullUrl)))
+                .andExpect(jsonPath("$.content[1].shortUrl", `is`(origin + shortenUrlRequest2.customAlias)))
 
-                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest3.customAlias)))
-                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
-                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$.content[2].alias", `is`(shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$.content[2].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
+                .andExpect(jsonPath("$.content[2].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
 
-                .andExpect(jsonPath("$[3].alias", `is`(shortenUrlRequest4.customAlias)))
-                .andExpect(jsonPath("$[3].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
-                .andExpect(jsonPath("$[3].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content[3].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content[3].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$.content[3].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
 
-                .andExpect(jsonPath("$[4].alias", `is`(shortenUrlRequest5.customAlias)))
-                .andExpect(jsonPath("$[4].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
-                .andExpect(jsonPath("$[4].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[4].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[4].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$.content[4].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
         }
 
         @Test
@@ -332,28 +332,26 @@ class IntegrationTestIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize<UrlEntity>(5)))
-                .andExpect(jsonPath("$[0].alias", `is`(shortenUrlRequest4.customAlias)))
-                .andExpect(jsonPath("$[0].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
-                .andExpect(jsonPath("$[0].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content", hasSize<UrlEntity>(5)))
+                .andExpect(jsonPath("$.content[0].alias", `is`(shortenUrlRequest4.customAlias)))
+                .andExpect(jsonPath("$.content[0].fullUrl", `is`(shortenUrlRequest4.fullUrl)))
+                .andExpect(jsonPath("$.content[0].shortUrl", `is`(origin + shortenUrlRequest4.customAlias)))
 
-                .andExpect(jsonPath("$[1].alias", `is`(shortenUrlRequest5.customAlias)))
-                .andExpect(jsonPath("$[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
-                .andExpect(jsonPath("$[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[1].alias", `is`(shortenUrlRequest5.customAlias)))
+                .andExpect(jsonPath("$.content[1].fullUrl", `is`(shortenUrlRequest5.fullUrl)))
+                .andExpect(jsonPath("$.content[1].shortUrl", `is`(origin + shortenUrlRequest5.customAlias)))
 
-                .andExpect(jsonPath("$[2].alias", `is`(shortenUrlRequest3.customAlias)))
-                .andExpect(jsonPath("$[2].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
-                .andExpect(jsonPath("$[2].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$.content[2].alias", `is`(shortenUrlRequest3.customAlias)))
+                .andExpect(jsonPath("$.content[2].fullUrl", `is`(shortenUrlRequest3.fullUrl)))
+                .andExpect(jsonPath("$.content[2].shortUrl", `is`(origin + shortenUrlRequest3.customAlias)))
 
-                .andExpect(jsonPath("$[3].alias", `is`(shortenUrlRequest6.customAlias)))
-                .andExpect(jsonPath("$[3].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
-                .andExpect(jsonPath("$[3].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$.content[3].alias", `is`(shortenUrlRequest6.customAlias)))
+                .andExpect(jsonPath("$.content[3].fullUrl", `is`(shortenUrlRequest6.fullUrl)))
+                .andExpect(jsonPath("$.content[3].shortUrl", `is`(origin + shortenUrlRequest6.customAlias)))
 
-                .andExpect(jsonPath("$[4].alias", `is`(shortenUrlRequest.customAlias)))
-                .andExpect(jsonPath("$[4].fullUrl", `is`(shortenUrlRequest.fullUrl)))
-                .andExpect(jsonPath("$[4].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$.content[4].alias", `is`(shortenUrlRequest.customAlias)))
+                .andExpect(jsonPath("$.content[4].fullUrl", `is`(shortenUrlRequest.fullUrl)))
+                .andExpect(jsonPath("$.content[4].shortUrl", `is`(origin + shortenUrlRequest.customAlias)))
         }
-
     }
-
 }

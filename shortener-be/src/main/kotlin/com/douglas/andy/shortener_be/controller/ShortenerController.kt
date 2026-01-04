@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -57,7 +58,7 @@ class ShortenerController(
         @RequestParam(defaultValue = "5") sizePerPage: Int,
         @RequestParam(defaultValue = "ALIAS") sortField: SortField,
         @RequestParam(defaultValue = "DESC") sortDirection: Sort.Direction
-    ): ResponseEntity<List<ShortenedUrlDAO>> {
+    ): ResponseEntity<Page<ShortenedUrlDAO>> {
         val pageable: Pageable = PageRequest.of(page, sizePerPage, sortDirection, sortField.value)
         return ResponseEntity.ok(service.findAllByPage(pageable))
     }

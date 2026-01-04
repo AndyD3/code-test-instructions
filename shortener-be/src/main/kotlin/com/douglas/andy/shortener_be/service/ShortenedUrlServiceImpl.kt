@@ -4,6 +4,8 @@ import com.douglas.andy.shortener_be.model.ShortenedUrlDAO
 import com.douglas.andy.shortener_be.model.UrlEntity
 import com.douglas.andy.shortener_be.repository.ShortenedUrlRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
@@ -25,12 +27,17 @@ class ShortenedUrlServiceImpl(private val repository: ShortenedUrlRepository, @V
         return shortenedURLs;
     }
 
-    override fun findAllByPage(pageable: Pageable): ArrayList<ShortenedUrlDAO> {
+    override fun findAllByPage(pageable: Pageable): Page<ShortenedUrlDAO> {
+
         val shortenedURLs=ArrayList<ShortenedUrlDAO>();
 
-        repository.findAll(pageable).map {shortenedURLs.add(ShortenedUrlDAO(it.alias, it.fullUrl, origin+it.alias ))};
+        val urlEntitiesPage = repository.findAll(pageable)
+        urlEntitiesPage.map { shortenedURLs.add(ShortenedUrlDAO(it.alias, it.fullUrl, origin + it.alias)) }
 
-        return shortenedURLs;
+        val shortenedURLDAOPage: Page<ShortenedUrlDAO> =
+            PageImpl(shortenedURLs, pageable, urlEntitiesPage.totalElements)
+
+        return shortenedURLDAOPage
     }
 
     override fun findById(id: String) : UrlEntity {

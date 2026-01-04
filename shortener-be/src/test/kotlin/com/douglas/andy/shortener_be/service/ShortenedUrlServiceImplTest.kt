@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DuplicateKeyException
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.util.*
 import kotlin.random.Random
@@ -47,6 +51,28 @@ class ShortenedUrlServiceImplTest {
 
         assertEquals(expectedDataHydrated, actualData)
         Mockito.verify(repository, Mockito.times(1)).findAll()
+    }
+
+    @Test
+    fun shouldReturnPaginatedShortenedUrlsDAOsHydratedWithOriginsFromRepo() {
+
+        val shortenedUrl1Hydrated =
+            ShortenedUrlDAO(shortenedUrl1.alias, shortenedUrl1.fullUrl, origin + shortenedUrl1.alias)
+        val shortenedUrl2Hydrated =
+            ShortenedUrlDAO(shortenedUrl2.alias, shortenedUrl2.fullUrl, origin + shortenedUrl2.alias)
+
+        val pageable: Pageable = PageRequest.of(+Random.nextInt(1000), Random.nextInt(1000), Sort.Direction.ASC, "ID")
+
+        val urlEntitiesReturnedFromRepository = PageImpl(listOf(shortenedUrl1, shortenedUrl2), pageable, 2)
+
+        val expectedDataHydrated = PageImpl(listOf(shortenedUrl1Hydrated, shortenedUrl2Hydrated), pageable, 2)
+
+        Mockito.`when`(repository.findAll(pageable)).thenReturn(urlEntitiesReturnedFromRepository)
+
+        val actualData = shortenedUrlServiceImpl.findAllByPage(pageable)
+
+        assertEquals(expectedDataHydrated, actualData)
+        Mockito.verify(repository, Mockito.times(1)).findAll(pageable)
     }
 
     @Test
