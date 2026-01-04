@@ -19,7 +19,7 @@ export const useDeleteUrl = (): UseBaseMutationResult<
   return useMutation({
     mutationFn: (shortUrl: string) => deleteUrl(shortUrl),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })      
+      queryClient.invalidateQueries({ queryKey: ['shortenedUrls']})      
       toast.success(`Short URL successfully deleted`)
     }
     ,

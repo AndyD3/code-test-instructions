@@ -3,7 +3,7 @@
 This in the front end which connects to the back end which should be ran from the shortner-be folder
 
 This will: 
-* Retrieve and display short urls from backend
+* Retrieve and display short urls from backend. Clicking the checkbox switches between the "getAll" from the spec and an improved paginated version (although a very crude interface)
 * Allow creation of new short urls (using an alias or not) 
 * Allow deletion of short urls by clicking the Delete button next to them
 * Allow you to test short urls by clicking on them (will redirect to full url in new tab)

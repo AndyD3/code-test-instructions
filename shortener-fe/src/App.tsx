@@ -1,12 +1,12 @@
 import './App.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useReadUrls } from './hooks/useReadShortenedUrls'
 import { useState } from 'react'
 import { ShortenUrlRequest } from './types'
 import { useCreateUrl } from './hooks/useCreateUrl'
 import { useDeleteUrl } from './hooks/useDeleteUrl'
 import { Toaster } from 'react-hot-toast'
-import { UrlsTable } from './UrlsTable'
+import { UrlsPaginated } from './UrlsPaginated'
+import { UrlsStandard } from './UrlsStandard'
 
 const queryClient = new QueryClient()
 export default function App() {
@@ -18,10 +18,15 @@ export default function App() {
 }
 
 function URLManager() {
-  const { data: shortenedUrls, isLoading, isError} = useReadUrls()
 
   const { mutate: createUrl } = useCreateUrl()
   const { mutate: deleteUrl } = useDeleteUrl()
+
+  const [isChecked, setIsChecked] = useState(false)
+
+  const checkHandler = () => {
+    setIsChecked(!isChecked)
+  }
 
   const emptyFormData = {
     fullUrl: '',
@@ -91,10 +96,22 @@ function URLManager() {
         </button>
       </div>
 
-      {isError && <div style={{color: "red"}}>An error has occurred reading URLs...</div>}
-      {isLoading && <div>Loading URLs...</div>}    
-      
-      <UrlsTable shortenedUrls={shortenedUrls} deleteUrl={deleteUrl}/>
+      <div>
+          Paginated: 
+          <input
+          type="checkbox"
+          id="checkbox"
+          checked={isChecked}
+          onChange={checkHandler}
+          />
+      </div>
+
+      { 
+        isChecked ? 
+          <UrlsPaginated deleteUrl={deleteUrl}/>
+        :
+          <UrlsStandard deleteUrl={deleteUrl}/>          
+      }
     </>
   )
 }

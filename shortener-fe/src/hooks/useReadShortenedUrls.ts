@@ -12,9 +12,7 @@ export const useReadUrls = (): QueryObserverResult<ShortenedUrl[]> => {
       const { data } = await readUrls()
       return data
     },
-    queryKey: ['shortenedUrls'],
-    //because of this refetch we prefer a written error message rather than the toast
-    refetchInterval: 2000, 
+    queryKey: ['shortenedUrls']
   }
 )
 }
