@@ -21,6 +21,17 @@ export const UrlsPaginated = ({deleteUrl}: Props) => {
       refetch()
     }, [page, size, direction, sort, refetch]);
 
+
+    const getPageOptions = (totalPages: number) => {
+      
+      const content = [];
+
+      for (let i = 0; i < totalPages; i++) {
+        content.push(<option value={i}>{i+1}</option> );
+      }
+      return content;
+    }
+
     return (
     <>
 
@@ -28,13 +39,8 @@ export const UrlsPaginated = ({deleteUrl}: Props) => {
       <select
         value={page} 
         onChange={e => setPage(parseInt(e.target.value))} 
-      >
-        <option value="0">0</option> 
-        <option value="1">1</option> 
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+      >        
+        {getPageOptions(urlsPage?.totalPages)}
       </select>
 
       Page Size:
@@ -45,6 +51,7 @@ export const UrlsPaginated = ({deleteUrl}: Props) => {
         <option value="2">2</option> 
         <option value="5">5</option>
         <option value="10">10</option>
+        <option value="15">15</option>
         <option value="25">25</option>
         <option value="50">50</option>
       </select>
